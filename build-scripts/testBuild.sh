@@ -1,112 +1,31 @@
 #!/bin/bash
 
-<<<<<<< HEAD
 exec >  >(tee -ia stdout.log)
 exec 2> >(tee -ia err.log >&2)
 
 
-=======
->>>>>>> 002_iso
 # Written by Keyaedisa
 # Website in the works
 
 source "$(dirname "${BASH_SOURCE[0]}")/../misc/.bashFormatting"
 
-<<<<<<< HEAD
-#echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-#sudoCheck=0
-#while [ $sudoCheck != 1 ]; do
-#read -p "This script ${txUnderline}${txBold}needs${txReset} to be run as ${txUnderline}${fgRed}sudo${txReset}. Did you run as ${fgRed}${txUnderline}sudo${txReset} (${fgGreen}y${txReset}/${fgRed}n${txReset})? " sudoCheckAns
-#	case $sudoCheckAns in
-#		y | yes | Y | Yes | YES )
-#			sudoCheck=1
-#			echo "Okay, ${fgCyan}continuing${txReset}!"
-#			sleep 1.3
-#			;;
-#		n | no | N | No | NO )
-#			echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-#			echo "${txBold}Self destructing${txReset}. Next time run as ${txUnderline}${fgRed}sudo${txReset}"
-#			echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-#			exit
-#			;;
-#		*)
-#			echo "${fgRed}Invalid${txReset} response. ${txUnderline}Try again.${txReset}"
-#			echo
-#			;;
-#	esac
-#done
-=======
-echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-sudoCheck=0
-while [ $sudoCheck != 1 ]; do
-read -p "This script ${txUnderline}${txBold}needs${txReset} to be run as ${txUnderline}${fgRed}sudo${txReset}. Did you run as ${fgRed}${txUnderline}sudo${txReset} (${fgGreen}y${txReset}/${fgRed}n${txReset})? " sudoCheckAns
-	case $sudoCheckAns in
-		y | yes | Y | Yes | YES )
-			sudoCheck=1
-			echo "Okay, ${fgCyan}continuing${txReset}!"
-			sleep 1.3
-			;;
-		n | no | N | No | NO )
-			echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-			echo "${txBold}Self destructing${txReset}. Next time run as ${txUnderline}${fgRed}sudo${txReset}"
-			echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-			exit
-			;;
-		*)
-			echo "${fgRed}Invalid${txReset} response. ${txUnderline}Try again.${txReset}"
-			echo
-			;;
-	esac
-done
->>>>>>> 002_iso
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo "${fgCyan}Step 1${txReset}: Getting ready to ${fgCyan}build!"
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 read -p "Please enter the name of your ${fgCyan}archiso${txReset} profile: " archisoProfile
+echo "Okay! Preparing iso build using ${fgCyan}${archisoProfile}${txReset}!"
+echo
+read -p "Where do you want the outFolder to be? : " outFolder
+echo "Okay! When iso build is ${fgMagenta}done${txReset} you can find the iso in ${fgCyan}${outFolder}${txReset}!"
 
-	[ -d ../ignore ] || mkdir ../ignore
-	[ -d ../ignore/${archisoProfile}-isos ] || mkdir ../ignore/${archisoProfile}-isos
-	buildFolder=../ignore/${archisoProfile}-build
-	outFolder=../ignore/${archisoProfile}-isos
+	buildFolder=/tmp/archiso-fs
 	profile=../$archisoProfile
 	profiledef=../$archisoProfile/profiledef.sh
-<<<<<<< HEAD
 	user=$(whoami)
 	echo $user
-#userCheck="0"
-#while [[ $userCheck != 1 ]]; do
-#	echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-#	echo "If you don't know the name of your current account, exit this script with ${txUnderline}Ctrl^C${txReset} and enter '${fgCyan}whoami${txReset}' in the terminal."
-#	read -p "Otherwise, enter the name of ${txUnderline}your user${txReset} account (current logged in user): " user
-#	pC="$(cat /etc/passwd)"
-#	if [[ $pC =~ .*$user.* ]]; then
-#		echo "Excellent"
-#		userCheck="1"
-#		unset pC
-#	else
-#		echo "That user doesn't exist in /etc/passwd. Try again"
-#	fi
-#done
-=======
-
-userCheck="0"
-while [[ $userCheck != 1 ]]; do
-	echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-	echo "If you don't know the name of your current account, exit this script with ${txUnderline}Ctrl^C${txReset} and enter '${fgCyan}whoami${txReset}' in the terminal."
-	read -p "Otherwise, enter the name of ${txUnderline}your user${txReset} account (current logged in user): " user
-	pC="$(cat /etc/passwd)"
-	if [[ $pC =~ .*$user.* ]]; then
-		echo "Excellent"
-		userCheck="1"
-		unset pC
-	else
-		echo "That user doesn't exist in /etc/passwd. Try again"
-	fi
-done
->>>>>>> 002_iso
+	sleep 5
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo "${fgCyan}Step 2${txReset}: Making sure you have latest ${fgCyan}archiso!"
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
@@ -120,11 +39,7 @@ echo "Will be ${txUnderline}${fgRed}deleting${txReset} previous work folder ${tx
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 
 	if [[ -d $buildFolder ]]; then
-<<<<<<< HEAD
 		 rm -rf $buildFolder
-=======
-		 sudo rm -rf $buildFolder
->>>>>>> 002_iso
 	fi
 
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
@@ -285,13 +200,8 @@ sleep 5
 
 sudo mkarchiso -v -w $buildFolder -o $outFolder $profile
 
-<<<<<<< HEAD
 #sudo chown -R $user ../ignore
 #sudo chown -R $user $profile
-=======
-sudo chown -R $user ../ignore
-sudo chown -R $user $profile
->>>>>>> 002_iso
 
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo "${fgCyan}Done!${txReset} Look in ${txBold}ignore/${txReset} for your ${txUnderline}build and iso folder${txReset}!"
