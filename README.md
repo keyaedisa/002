@@ -1,4 +1,4 @@
-# 002SE Build Repo
+# 002 Build Repo
 
 Under Construction.
-(https://i.imgur.com/jGpT1qC.jpeg)
+![002!](https://i.imgur.com/JNoducE.gif)
