@@ -1,7 +1,11 @@
 #!/bin/bash
 
-exec >  >(tee -ia stdout.log)
-exec 2> >(tee -ia err.log >&2)
+if [[ -d logs ]]; then
+	rm -rf logs
+fi
+mkdir logs
+exec >  >(tee -ia logs/stdout.log)
+exec 2> >(tee -ia logs/err.log >&2)
 
 
 # Written by Keyaedisa
@@ -14,24 +18,23 @@ echo "${fgCyan}Step 1${txReset}: Getting ready to ${fgCyan}build!"
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 read -p "Please enter the name of your ${fgCyan}archiso${txReset} profile: " archisoProfile
-echo "Okay! Preparing iso build using ${fgCyan}${archisoProfile}${txReset}!"
-echo
-read -p "Where do you want the outFolder to be? : " outFolder
-echo "Okay! When iso build is ${fgMagenta}done${txReset} you can find the iso in ${fgCyan}${outFolder}${txReset}!"
+echo "Oki! Preparing iso build using ${fgCyan}${archisoProfile}${txReset}!" && sleep 1.3
+read -p "Where do you want the outFolder to be? (Full path. Unfortunately ~/ expansion ${fgRed}doesn't${txReset} work) : " outFolder
+echo "Oki! When iso build is ${fgMagenta}done${txReset} you can find the iso in ${fgCyan}${outFolder}${txReset}!" && sleep 1.3
+read -p "Where would you like the ${fgCyan}build${txReset} folder to be? : " buildFolder
+echo "Oki! ${fgCyan}${buildFolder}${txReset} will be where the build takes place!" && sleep 1.3
 
-	buildFolder=/tmp/archiso-fs
 	profile=../$archisoProfile
 	profiledef=../$archisoProfile/profiledef.sh
 	user=$(whoami)
-	echo $user
-	sleep 5
+
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo "${fgCyan}Step 2${txReset}: Making sure you have latest ${fgCyan}archiso!"
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 
 	sleep 1.3
-	sudo pacman -Su archiso --noconfirm
+	sudo pacman -S archiso --needed --noconfirm
 
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo "${fgCyan}Step 3${txReset}:Getting ready to ${fgCyan}build the iso!${txReset}"
@@ -46,11 +49,11 @@ echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 echo "${fgCyan}Step 3.5${txReset}: Updating ${fgCyan}references${txReset} and ${fgCyan}profiledef.sh${txReset}!"
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 
-	currentName=$(sed -n 's/\(^iso_name=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentLabel=$(sed -n 's/\(^iso_label=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentPublisher=$(sed -n 's/\(^iso_publisher=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentVersion=$(sed -n 's/\(^iso_version=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentApplication=$(sed -n 's/\(^iso_application=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
+	currentName=$(sed -n 's/\(^iso_name=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentLabel=$(sed -n 's/\(^iso_label=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentPublisher=$(sed -n 's/\(^iso_publisher=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentVersion=$(sed -n 's/\(^iso_version=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentApplication=$(sed -n 's/\(^iso_application=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
 
 updateProfiledef="0"
 while [ $updateProfiledef != 1 ]; do
@@ -75,14 +78,13 @@ y | yes | Y | Yes | YES )
 	echo "Choose an option ${txBold}${fgCyan}1-5${txReset} to ${txUnderline}modify${txReset}. Enter ${fgCyan}6${txReset} ${txBold}or${txReset} ${fgCyan}Finished${txReset} when ${txUnderline}finished${txReset}!"
 	read -p "${fgCyan}1${txReset}:Name , ${fgCyan}2${txReset}:Label , ${fgCyan}3${txReset}:Publisher , ${fgCyan}4${txReset}:Application , ${fgCyan}5${txReset}:Version , ${fgRed}6${txReset}:${fgRed}Finished${txReset}! : " selection
 	else
-	currentName=$(sed -n 's/\(^iso_name=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentLabel=$(sed -n 's/\(^iso_label=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentPublisher=$(sed -n 's/\(^iso_publisher=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentVersion=$(sed -n 's/\(^iso_version=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
-	currentApplication=$(sed -n 's/\(^iso_application=\)//p' $profiledef | sed 's/\([^"]*\)./\1/g')
+	currentName=$(sed -n 's/\(^iso_name=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentLabel=$(sed -n 's/\(^iso_label=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentPublisher=$(sed -n 's/\(^iso_publisher=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentVersion=$(sed -n 's/\(^iso_version=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
+	currentApplication=$(sed -n 's/\(^iso_application=\)//p' $profiledef | sed 's/\([^"]*\)./\1/gi')
 	echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 	echo "${txUnderline}Current${txReset} values in ${fgCyan}profiledef.sh${txReset}!"
-	echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 	sed -n '4,8p' $profiledef
 	echo
 	echo "What to modify ${fgCyan}next${txReset}?"
@@ -95,7 +97,7 @@ y | yes | Y | Yes | YES )
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 		read -p "${txUnderline}Current${txReset} ${fgCyan}ISO Name${txReset} is ${currentName}. What would you like to ${txBold}rename${txReset}? : " newName
 		echo
-		echo "Oki. This ${fgCyan}ISO${txReset} will now be named ${fgCyan}${newName}${txReset}!"
+		echo "Oki. This ${fgCyan}ISO${txReset} will now be named ${fgCyan}${newName}${txReset}!" && sleep 1.7
 		isoCodename=$(sed -n "s/\(^ISO_CODENAME=\)//p" $profile/airootfs/etc/dev-rel)
 		awk -v nN="$newName" -v iC="$isoCodename" 'NR==2, NR==2 {sub(iC, nN)}1' $profile/airootfs/etc/dev-rel >> dev-rel
 		mv dev-rel $profile/airootfs/etc/dev-rel
@@ -107,7 +109,7 @@ y | yes | Y | Yes | YES )
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 		read -p "${txUnderline}Current${txReset} ${fgCyan}ISO Label${txReset} is ${txUnderline}${currentLabel}${txReset}. What would you like to ${txBold}relabel${txReset}? : " newLabel
 		echo
-		echo "Oki. This ${fgCyan}ISO${txReset} will now be labeled ${fgCyan}${newLabel}${txReset}!"
+		echo "Oki. This ${fgCyan}ISO${txReset} will now be labeled ${fgCyan}${newLabel}${txReset}!" && sleep 1.7
 		awk -v cL="$currentLabel" -v nL="$newLabel" 'NR==5, NR==5 {sub(cL, nL)}1' $profiledef >> profiledef
 		mv profiledef $profiledef
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
@@ -116,16 +118,17 @@ y | yes | Y | Yes | YES )
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 		read -p "${txUnderline}Current${txReset} ${fgCyan}ISO Publisher${txReset} is ${txUnderline}${currentPublisher}${txReset}. Who should be ${txBold}credited instead${txReset}? : " newPublisher
 		echo
-		echo "Oki. This ${fgCyan}ISO${txReset} will now be credited to ${fgCyan}${newPublisher}${txReset}!"
+		echo "Oki. This ${fgCyan}ISO${txReset} will now be credited to ${fgCyan}${newPublisher}${txReset}!" && sleep 1.7
 		awk -v cP="$currentPublisher" -v nP="$newPublisher" 'NR==6, NR==6 {sub(cP, nP)}1' $profiledef >> profiledef
 		mv profiledef $profiledef
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 		;;
 	4 | Application | APPLICATION | application )
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-		read -P "${txUnderline}Current${txReset} ${fgCyan}ISO Application${txReset} is ${txUnderline}${currentApplication}${txReset}. What should be the ${txBold}application instead${txReset}? : " newApplication
+		read -p "${txUnderline}Current${txReset} ${fgCyan}ISO Application${txReset} is ${txUnderline}${currentApplication}${txReset}. What should be the ${txBold}application instead${txReset}? : " newApplication
 		echo
-		echo "Oki. This ${fgCyan}ISO's application${txReset} will now be ${fgCyan}${newApplication}${txReset}!"
+		echo "Oki. This ${fgCyan}ISO's application${txReset} will now be ${fgCyan}${newApplication}${txReset}!" && sleep 1.7
+		sleep 1.3
 		awk -v cA="$currentApplication" -v nA="$newApplication" 'NR==7, NR==7 {sub(cA, nA)}1' $profiledef >> profiledef
 		mv profiledef $profiledef
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
@@ -135,9 +138,9 @@ y | yes | Y | Yes | YES )
 		echo "${fgRed}Warning${txReset}: do ${txStandout}${fgRed}NOT${txReset} try and enter any combination of '$\(date)'! It does not like! Bug me enough and I'll consider fixing it."
 		read -p "${txUnderline}Current${txReset} ${fgCyan}ISO version${txReset} is ${txUnderline}${currentVersion}${txReset}. What should be the ${txBold}version instead${txReset}? : " newVersion
 		echo
-		echo "Oki. This ${fgCyan}ISO's version${txReset} will be set to ${fgCyan}${newVersion}${txReset}!"
+		echo "Oki. This ${fgCyan}ISO's version${txReset} will be set to ${fgCyan}${newVersion}${txReset}!" && sleep 1.7
 		awk -v cV="$currentVersion" -v nV="$newVersion" 'NR==8, NR==8 {sub(cV, nV)}1' $profiledef >> profiledef
-		if [[ $? != 0 ]]; then
+		if [[ $profiledef =~ .*$currentVersion.* ]]; then
 			sed -i "s/\(^iso_version=\).*/\1$newVersion/" $profile/airootfs/etc/dev-rel
 		fi
 		mv profiledef $profiledef
@@ -145,7 +148,7 @@ y | yes | Y | Yes | YES )
 		;;
 	6 | FINISHED | Finished | finished )
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-		echo "Awesome! Let's ${fgCyan}continue${txReset}!"
+		echo "Awesome! Let's ${fgCyan}continue${txReset}!" && sleep 1.7
 		echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 		finished="1"
 		easterEgg="0"
@@ -158,7 +161,7 @@ y | yes | Y | Yes | YES )
 			easterEgg=$(($easterEgg + 1))
 		else
 			echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-			echo "No ${txBold}way${txReset} you messed this up ${txBold}${fgRed}$easterEgg${txReset} times!"
+			echo "No ${txBold}way${txReset} you messed this up ${txBold}${fgRed}$easterEgg${txReset} times!" && sleep 1.7
 			echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 		fi
 		;;
@@ -168,7 +171,7 @@ y | yes | Y | Yes | YES )
 	;;
 n | N | no | No | NO )
 	echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-	echo "Oki. Moving on!"
+	echo "Oki. Moving on!" && sleep 1.7
 	echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
 	updateProfiledef="1"
 	easterEgg="0"
@@ -178,7 +181,7 @@ n | N | no | No | NO )
 		echo "${fgRed}Invalid${txReset} response. ${txUnderline}Try again.${txReset}"
 		easterEgg=$(($easterEgg + 1))
 	else
-		echo "No ${txBold}way${txReset} you messed this up ${txBold}${fgRed}$easterEgg${txReset} times!"
+		echo "No ${txBold}way${txReset} you messed this up ${txBold}${fgRed}$easterEgg${txReset} times!" && sleep 1.7
 	fi
 	;;
 esac
@@ -200,10 +203,7 @@ sleep 5
 
 sudo mkarchiso -v -w $buildFolder -o $outFolder $profile
 
-#sudo chown -R $user ../ignore
-#sudo chown -R $user $profile
-
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
-echo "${fgCyan}Done!${txReset} Look in ${txBold}ignore/${txReset} for your ${txUnderline}build and iso folder${txReset}!"
+echo "${fgCyan}Done!${txReset} Look in ${txBold}${outFolder}${txReset} for your ${txUnderline}build and iso folder${txReset}!"
 echo "Made with ${fgRed}love${txReset} by your ${fgMagenta}favorite genderless${txReset} being ${txBold}${txUnderline}${txStandout}${fgMagenta}Keyaedisa${txReset}${txBold}!${txReset}"
 echo $fgMagenta&&xUnicode 2730 49&&echo $txReset
